@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - College Admission Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='rce-promo-thumb-n.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="nav-brand">
+            <img src="{{ url_for('static', filename='rcename.png') }}" alt="RCE Logo" class="nav-logo">
+            <span class="brand-text">College Admission Predictor</span>
+        </a>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="#" class="btn btn-login">Log In</a>
+            <a href="{{ url_for('signup') }}" class="btn btn-signup">Sign Up</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Login Section -->
+        <div class="form-container" id="loginSection">
+            <h2>Sign In</h2>
+            <p class="subtitle">Welcome back! Please enter your credentials to continue</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form id="loginForm" method="POST" action="{{ url_for('login') }}">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+            <p class="form-footer">Don't have an account? <a href="{{ url_for('signup') }}">Sign Up Free</a></p>
+        </div>
+    </div>
+</body>
+</html>

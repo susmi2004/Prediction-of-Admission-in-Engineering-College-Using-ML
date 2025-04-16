@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - College Admission Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='rce-promo-thumb-n.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body class="logged-in">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="{{ url_for('static', filename='rcename.png') }}" alt="RCE Logo" class="nav-logo">
+            <span class="brand-text">College Admission Predictor</span>
+            <span id="welcomeMsg" class="welcome-msg" data-username="{{ session.get('user_name', '') }}">Welcome, {{ session.get('user_name', '') }}!</span>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('home') }}" class="active">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{{ url_for('logout') }}" class="logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="form-container">
+            <h2>College Prediction Form</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form id="predictionForm" method="POST" action="{{ url_for('predict') }}">
+                <div class="form-group">
+                    <label for="preferredCollege">
+                        <i class="fas fa-university"></i> Preferred College:
+                    </label>
+                    <select id="preferredCollege" name="preferredCollege" required>
+                        <option value="">Select Preferred College</option>
+                        {% for college in colleges %}
+                            <option value="{{ college.code }}">{{ college.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <span id="collegeLoading" class="loading" style="display: none;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="preferredBranch">
+                        <i class="fas fa-code-branch"></i> Preferred Branch:
+                    </label>
+                    <select id="preferredBranch" name="preferredBranch" required disabled>
+                        <option value="">Select Preferred Branch</option>
+                        {% for branch in branches %}
+                            <option value="{{ branch.code }}">{{ branch.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <span id="branchLoading" class="loading" style="display: none;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="gender">
+                        <i class="fas fa-genderless"></i> Gender:
+                    </label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">
+                        <i class="fas fa-users"></i> Category:
+                    </label>
+                    <select id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="OC">OC</option>
+                        <option value="BCA">BC_A</option>
+                        <option value="BCB">BC_B</option>
+                        <option value="BCC">BC_C</option>
+                        <option value="BCD">BC_D</option>
+                        <option value="BCE">BC_E</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                        <option value="OC_EWS">OC_EWS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="rank">
+                        <i class="fas fa-trophy"></i> Rank:
+                    </label>
+                    <input type="number" id="rank" name="rank" placeholder="Enter your rank" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Submit
+                </button>
+            </form>
+            
+            <!-- Result Box (will be shown after prediction) -->
+            <div id="resultBox" class="result-box" style="display: none;">
+                <div class="result-content">
+                    <h3 class="result-title">Prediction Result</h3>
+                    <p id="resultMessage"></p>
+                    <div id="collegeDetails" style="display: none;">
+                        <h4>College Details</h4>
+                        <div id="collegeInfo"></div>
+                    </div>
+                    <div id="alternativeBranches" style="display: none;">
+                        <h4>Alternative Options</h4>
+                        <p id="alternativesInfo"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load colleges when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadColleges();
+        });
+        
+        // Function to load colleges
+        async function loadColleges() {
+            const collegeSelect = document.getElementById('preferredCollege');
+            const collegeLoading = document.getElementById('collegeLoading');
+            
+            collegeLoading.style.display = 'inline-block';
+            
+            try {
+                const response = await fetch('{{ url_for("get_colleges") }}');
+                const colleges = await response.json();
+                
+                // Clear existing options
+                collegeSelect.innerHTML = '<option value="">Select Preferred College</option>';
+                
+                // Add new options
+                colleges.forEach(college => {
+                    const option = document.createElement('option');
+                    option.value = college.code;
+                    option.textContent = college.name;
+                    collegeSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading colleges:', error);
+            } finally {
+                collegeLoading.style.display = 'none';
+            }
+        }
+        
+        // Function to load branches based on selected college
+        async function loadBranches(collegeCode) {
+            const branchSelect = document.getElementById('preferredBranch');
+            const branchLoading = document.getElementById('branchLoading');
+            
+            // Clear existing options and disable
+            branchSelect.innerHTML = '<option value="">Select Preferred Branch</option>';
+            branchSelect.disabled = true;
+            
+            if (!collegeCode) {
+                return;
+            }
+            
+            branchLoading.style.display = 'inline-block';
+            
+            try {
+                const response = await fetch(`{{ url_for("get_branches", college_code="") }}${collegeCode}`);
+                const branches = await response.json();
+                
+                // Add new options
+                branches.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch.code;
+                    option.textContent = branch.name;
+                    branchSelect.appendChild(option);
+                });
+                
+                // Enable select if we have branches
+                branchSelect.disabled = branches.length === 0;
+            } catch (error) {
+                console.error('Error loading branches:', error);
+            } finally {
+                branchLoading.style.display = 'none';
+            }
+        }
+        
+        // Add event listener to college select
+        document.getElementById('preferredCollege').addEventListener('change', function() {
+            loadBranches(this.value);
+        });
+        
+        // No need for the AJAX form submission anymore as we're using regular form submission
+        // The form will naturally submit to the /predict route
+    </script>
+</body>
+</html>

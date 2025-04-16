@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results - College Admission Predictor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='rce-promo-thumb-n.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        .results-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 800px;
+        }
+        
+        .eligibility-card {
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .eligible {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+        }
+        
+        .eligible .eligibility-icon {
+            color: #28a745;
+        }
+        
+        .eligible .eligibility-title {
+            color: #155724;
+        }
+        
+        .not_eligible_with_alternatives, .not_eligible_no_alternatives {
+            background-color: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+        
+        .not_eligible_with_alternatives .eligibility-icon,
+        .not_eligible_no_alternatives .eligibility-icon {
+            color: #dc3545;
+        }
+        
+        .not_eligible_with_alternatives .eligibility-title,
+        .not_eligible_no_alternatives .eligibility-title {
+            color: #721c24;
+        }
+        
+        .eligibility-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .eligibility-content {
+            padding: 0;
+        }
+        
+        .eligibility-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .eligibility-message {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .info-card {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            border-top: 5px solid #4285f4;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            color: #4285f4;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .info-item {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .alternatives-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .alternatives-list li {
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #6c757d;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .branch-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .branch-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+            width: calc(33.333% - 15px);
+            min-width: 200px;
+            border-left: 4px solid #4285f4;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .branch-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .branch-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .branch-code {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .branch-rank {
+            font-size: 14px;
+            color: #4285f4;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .branch-card {
+                width: 100%;
+            }
+        }
+        
+        .result-box {
+            margin-bottom: 30px;
+        }
+        
+        .result-message {
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .result-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .result-text {
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="logged-in">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="{{ url_for('static', filename='rcename.png') }}" alt="RCE Logo" class="nav-logo">
+            <span class="brand-text">College Admission Predictor</span>
+            <span id="welcomeMsg" class="welcome-msg" data-username="{{ session.get('user_name', '') }}">Welcome, {{ session.get('user_name', '') }}!</span>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('home') }}">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{{ url_for('logout') }}" class="logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="results-container">
+            <!-- Main Eligibility Card -->
+            <div class="eligibility-card {{ result_status }}">
+                <div class="eligibility-icon">
+                    {% if is_eligible %}
+                    <i class="fas fa-check-circle"></i>
+                    {% else %}
+                    <i class="fas fa-times-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="eligibility-content">
+                    <h2 class="eligibility-title">
+                        {% if is_eligible %}
+                        You Are Eligible!
+                        {% else %}
+                        Not Eligible
+                        {% endif %}
+                    </h2>
+                    <p class="eligibility-message">{{ message }}</p>
+                </div>
+            </div>
+            
+            <!-- User Information Card -->
+            <div class="info-card">
+                <h3 class="card-title"><i class="fas fa-user"></i> Your Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Rank</div>
+                        <div class="info-value">{{ rank }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Gender</div>
+                        <div class="info-value">{{ gender|title }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Category</div>
+                        <div class="info-value">{{ category }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Preferred Branch</div>
+                        <div class="info-value">{{ preferred_branch }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if college_details %}
+            <div class="info-card">
+                <h3 class="card-title"><i class="fas fa-university"></i> College Details</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">College Name</div>
+                        <div class="info-value">{{ college_details.name }}</div>
+                    </div>
+                    {% if college_details.place and college_details.place != "N/A" %}
+                    <div class="info-item">
+                        <div class="info-label">Location</div>
+                        <div class="info-value">{{ college_details.place }}</div>
+                    </div>
+                    {% endif %}
+                    {% if college_details.district and college_details.district != "N/A" %}
+                    <div class="info-item">
+                        <div class="info-label">District</div>
+                        <div class="info-value">{{ college_details.district }}</div>
+                    </div>
+                    {% endif %}
+                    {% if college_details.fee and college_details.fee > 0 %}
+                    <div class="info-item">
+                        <div class="info-label">Fee</div>
+                        <div class="info-value">₹{{ college_details.fee }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if show_alternative_branches and has_eligible_branches %}
+            <div class="info-card">
+                <h3 class="card-title"><i class="fas fa-code-branch"></i> Alternative Branches at {{ college_details.name }}</h3>
+                <div class="branch-cards">
+                    {{ alternative_branches|safe }}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if show_eligible_colleges and has_eligible_colleges %}
+            <div class="info-card">
+                <h3 class="card-title"><i class="fas fa-university"></i> Other Eligible Colleges for {{ preferred_branch }}</h3>
+                <div class="table-responsive">
+                    {{ eligible_colleges|safe }}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if not is_eligible and not has_eligible_branches and not has_eligible_colleges %}
+            <div class="info-card">
+                <h3 class="card-title"><i class="fas fa-exclamation-circle"></i> No Alternative Options</h3>
+                <p>We couldn't find any alternative branches or colleges that match your rank and preferences.</p>
+                <p>You may want to:</p>
+                <ul>
+                    <li>Try a different category</li>
+                    <li>Consider other branches</li>
+                    <li>Look at colleges in other locations</li>
+                </ul>
+            </div>
+            {% endif %}
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('home') }}" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Make Another Prediction
+                </a>
+                <a href="#" onclick="window.print(); return false;" class="btn btn-secondary">
+                    <i class="fas fa-print"></i> Print Results
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

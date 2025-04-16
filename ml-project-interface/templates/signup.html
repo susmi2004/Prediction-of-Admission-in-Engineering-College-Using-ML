@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - College Admission Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='rce-promo-thumb-n.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="nav-brand">
+            <img src="{{ url_for('static', filename='rcename.png') }}" alt="RCE Logo" class="nav-logo">
+            <span class="brand-text">College Admission Predictor</span>
+        </a>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('login') }}" class="btn btn-login">Log In</a>
+            <a href="#" class="btn btn-signup">Sign Up</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h2>Join RCE Community</h2>
+            <p class="subtitle">Create your account to start predicting your future</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form id="signupForm" method="POST" action="{{ url_for('signup') }}">
+                <div class="form-group">
+                    <label for="full_name">
+                        <i class="fas fa-user"></i> Full Name
+                    </label>
+                    <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="location">
+                        <i class="fas fa-map-marker-alt"></i> Location
+                    </label>
+                    <input type="text" id="location" name="location" placeholder="Enter your location" required>
+                </div>
+                <div class="form-group">
+                    <label for="tenth_percentage">
+                        <i class="fas fa-graduation-cap"></i> 10th Percentage
+                    </label>
+                    <input type="number" id="tenth_percentage" name="tenth_percentage" placeholder="Enter your 10th percentage" min="0" max="100" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="inter_percentage">
+                        <i class="fas fa-graduation-cap"></i> Inter Percentage
+                    </label>
+                    <input type="number" id="inter_percentage" name="inter_percentage" placeholder="Enter your inter percentage" min="0" max="100" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">
+                        <i class="fas fa-users"></i> Category
+                    </label>
+                    <select id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="OC">OC</option>
+                        <option value="OC_EWS">OC_EWS</option>
+                        <option value="BC_A">BC_A</option>
+                        <option value="BC_B">BC_B</option>
+                        <option value="BC_C">BC_C</option>
+                        <option value="BC_D">BC_D</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="student_mobile">
+                        <i class="fas fa-mobile-alt"></i> Student Mobile Number
+                    </label>
+                    <input type="tel" id="student_mobile" name="student_mobile" placeholder="Enter your mobile number" pattern="[0-9]{10}" required>
+                </div>
+                <div class="form-group">
+                    <label for="parent_mobile">
+                        <i class="fas fa-mobile-alt"></i> Parent Mobile Number
+                    </label>
+                    <input type="tel" id="parent_mobile" name="parent_mobile" placeholder="Enter parent's mobile number" pattern="[0-9]{10}" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">
+                        <i class="fas fa-lock"></i> Confirm Password
+                    </label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            <p class="form-footer">Already have an account? <a href="{{ url_for('login') }}">Sign In</a></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

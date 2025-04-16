@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Admission Predictor - Your Future Starts Here</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar" id="mainNav" style="display: none;">
+        <div class="nav-brand">
+            College Admission Predictor
+            <span id="welcomeMsg" class="welcome-msg"></span>
+        </div>
+        <div class="nav-links">
+            <a href="#" onclick="showSection('home')" id="homeLink">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="#" onclick="showSection('about')" id="aboutLink">
+                <i class="fas fa-info-circle"></i> About
+            </a>
+            <a href="#" onclick="logout()" class="logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Login Section -->
+        <div class="form-container" id="loginSection">
+            <h2>Welcome to Your Future</h2>
+            <p class="subtitle">Enter your credentials to access the admission predictor</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+            <p class="form-footer">Don't have an account? <a href="#" onclick="showSection('signup')">Create Account</a></p>
+        </div>
+
+        <!-- Signup Section -->
+        <div class="form-container" id="signupSection" style="display: none;">
+            <h2>Join RCE Community</h2>
+            <p class="subtitle">Create your account to start predicting your future</p>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="name">
+                        <i class="fas fa-user"></i> Full Name
+                    </label>
+                    <input type="text" id="name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">
+                        <i class="fas fa-lock"></i> Confirm Password
+                    </label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            <p class="form-footer">Already have an account? <a href="#" onclick="showSection('login')">Sign In</a></p>
+        </div>
+
+        <!-- Home Section -->
+        <div class="form-container" id="homeSection" style="display: none;">
+            <h2>College Prediction Form</h2>
+            <form id="predictionForm">
+                <div class="form-group">
+                    <label for="preferredCollege">
+                        <i class="fas fa-university"></i> Preferred College Name:
+                    </label>
+                    <input type="text" id="preferredCollege" placeholder="Enter college name" required>
+                </div>
+                <div class="form-group">
+                    <label for="preferredBranch">
+                        <i class="fas fa-code-branch"></i> Preferred Branch:
+                    </label>
+                    <select id="preferredBranch" required>
+                        <option value="">Select Preferred Branch</option>
+                        <option value="cse">Computer Science & Engineering</option>
+                        <option value="ece">Electronics & Communication Engineering</option>
+                        <option value="mec">Mechanical Engineering</option>
+                        <option value="civ">Civil Engineering</option>
+                        <option value="eee">Electrical & Electronics Engineering</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gender">
+                        <i class="fas fa-genderless"></i> Gender:
+                    </label>
+                    <select id="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">
+                        <i class="fas fa-users"></i> Category:
+                    </label>
+                    <select id="category" required>
+                        <option value="">Select Category</option>
+                        <option value="oc">OC</option>
+                        <option value="bca">BC_A</option>
+                        <option value="bcb">BC_B</option>
+                        <option value="bcc">BC_C</option>
+                        <option value="bcd">BC_D</option>
+                        <option value="sc">SC</option>
+                        <option value="st">ST</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="rank">
+                        <i class="fas fa-trophy"></i> Rank:
+                    </label>
+                    <input type="number" id="rank" placeholder="Enter your rank" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Submit
+                </button>
+            </form>
+        </div>
+
+        <!-- About Section -->
+        <div class="about-container" id="aboutSection" style="display: none;">
+            <h2>About Us</h2>
+            <div class="about-content">
+                <p>Welcome to our College Prediction System! This project uses machine learning algorithms to help students predict their college admission chances based on various factors.</p>
+                <p>Our system takes into account multiple parameters such as:</p>
+                <ul>
+                    <li>Preferred College</li>
+                    <li>Preferred Branch</li>
+                    <li>Gender</li>
+                    <li>Category</li>
+                    <li>Rank</li>
+                </ul>
+                <p>Using these inputs, our ML model provides accurate predictions to help students make informed decisions about their college applications.</p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
